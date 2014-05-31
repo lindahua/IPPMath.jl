@@ -21,6 +21,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
         end
 
         ippf = string(ippfpre, '_', suf)
+        ippfI = string(ippf, "_I")
 
         # functions
         @eval begin
@@ -34,7 +35,14 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                 return y
             end
 
-            $(f!)(x::ContiguousArray{$T}, c::$C) = $(f!)(x, x, c)
+            function $(f!)(y::ContiguousArray{$T}, c::$C)
+                n = length(y)
+                if n > 0
+                    @ippscall($ippfI, ($T, Ptr{$T}, IppInt), c, pointer(y), n)
+                end
+                return y
+            end
+            
             $(f)(x::ContiguousArray{$T}, c::$C) = $(f!)(similar(x), x, c)
         end
     end
