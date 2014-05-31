@@ -52,8 +52,8 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
 
     f! = symbol(string(f, '!'))
 
-    for (T, C, suf) in [(:Float32, :Real, "32f"), 
-                        (:Float64, :Real, "64f")]
+    for (T, S, suf) in [(:Float32, :Real, "32f"), 
+                           (:Float64, :Real, "64f")]
 
         if f == :rdivide && suf != "32f"
             continue  # ippsDivCRev over float32
@@ -63,7 +63,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
         ippfI = string(ippf, "_I")
 
         @eval begin
-            function $(f!)(y::ContiguousArray{$T}, x::ContiguousArray{$T}, c::$C)
+            function $(f!)(y::ContiguousArray{$T}, x::ContiguousArray{$T}, c::$S)
                 n = length(x)
                 length(y) == n || throw(DimensionMismatch("Inconsistent array lengths."))
                 if n > 0
@@ -73,7 +73,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                 return y
             end
 
-            function $(f!)(y::ContiguousArray{$T}, c::$C)
+            function $(f!)(y::ContiguousArray{$T}, c::$S)
                 n = length(y)
                 if n > 0
                     @ippscall($ippfI, ($T, Ptr{$T}, IppInt), c, pointer(y), n)
@@ -81,7 +81,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                 return y
             end
             
-            $(f)(x::ContiguousArray{$T}, c::$C) = $(f!)(similar(x), x, c)
+            $(f)(x::ContiguousArray{$T}, c::$S) = $(f!)(similar(x), x, c)
         end
     end
 end
