@@ -1,5 +1,46 @@
 # Arithmetics and elementary math functions
 
+## vec op vec
+
+for (f, ippfpre) in [(:add, "ippsAdd"), 
+                     (:subtract, "ippsSub"), 
+                     (:multiply, "ippsMul"), 
+                     (:divide, "ippsDiv")]
+
+    f! = symbol(string(f, '!'))
+
+    for (T, suf) in [(:Float32, "32f"), 
+                     (:Float64, "64f")]
+
+        ippf = string(ippfpre, '_', suf)
+        ippfI = string(ippf, "_I")
+
+        @eval begin
+            function $(f!)(y::ContiguousArray{$T}, x1::ContiguousArray{$T}, x2::ContiguousArray{$T})
+                n = length(y)
+                length(x1) == length(x2) == n || throw(DimensionMismatch("Inconsistent array lengths."))
+                if n > 0
+                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, Ptr{$T}, IppInt), 
+                        pointer(x2), pointer(x1), pointer(y), n)
+                end
+                return y
+            end
+
+            function $(f!)(y::ContiguousArray{$T}, x::ContiguousArray{$T})
+                n = length(y)
+                length(x) == n || throw(DimensionMismatch("Inconsistent array lengths."))
+                if n > 0
+                    @ippscall($ippfI, (Ptr{$T}, Ptr{$T}, IppInt), pointer(x), pointer(y), n)
+                end
+                return y
+            end
+
+            $(f)(x1::ContiguousArray{$T}, x2::ContiguousArray{$T}) = $(f!)(similar(x1), x1, x2)
+        end
+    end
+end
+
+
 ## vec op scalar
 
 for (f, ippfpre) in [(:add, "ippsAddC"), 
@@ -12,9 +53,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
     f! = symbol(string(f, '!'))
 
     for (T, C, suf) in [(:Float32, :Real, "32f"), 
-                        (:Float64, :Real, "64f"), 
-                        (:Complex64, :Number, "32fc"), 
-                        (:Complex128, :Number, "64fc")]
+                        (:Float64, :Real, "64f")]
 
         if f == :rdivide && suf != "32f"
             continue  # ippsDivCRev over float32
@@ -23,7 +62,6 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
         ippf = string(ippfpre, '_', suf)
         ippfI = string(ippf, "_I")
 
-        # functions
         @eval begin
             function $(f!)(y::ContiguousArray{$T}, x::ContiguousArray{$T}, c::$C)
                 n = length(x)
