@@ -52,3 +52,30 @@ for (f, f!, op) in {(add, add!, .+),
     end
 end
 
+# unary functions
+
+for (f, f!, op) in {(IPPMath.abs, IPPMath.abs!, abs), 
+                    (IPPMath.sqr, IPPMath.sqr!, abs2), 
+                    (IPPMath.sqrt, IPPMath.sqrt!, sqrt), 
+                    (IPPMath.exp, IPPMath.exp!, exp), 
+                    (IPPMath.log, IPPMath.log!, log), 
+                    (IPPMath.atan, IPPMath.atan!, atan)}
+
+    for T in [Float32, Float64]
+        @test isempty(f(T[]))
+
+        x = rand(T, 8)
+        if is(op, abs)
+            x .-= convert(T, 0.5)
+        end
+        gt = op(x)
+
+        @test_approx_eq f(x) gt
+
+        y = copy(x)
+        @test f!(y) === y
+        @test_approx_eq y gt
+    end
+end
+
+

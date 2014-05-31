@@ -53,7 +53,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
     f! = symbol(string(f, '!'))
 
     for (T, S, suf) in [(:Float32, :Real, "32f"), 
-                           (:Float64, :Real, "64f")]
+                        (:Float64, :Real, "64f")]
 
         if f == :rdivide && suf != "32f"
             continue  # ippsDivCRev over float32
@@ -87,5 +87,43 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
 end
 
 
+# unary elementary math functions
 
+for (f, ippfpre) in [(:abs, "ippsAbs"), 
+                     (:sqr, "ippsSqr"), 
+                     (:sqrt, "ippsSqrt"), 
+                     (:exp, "ippsExp"), 
+                     (:log, "ippsLn"), 
+                     (:atan, "ippsArctan")]
+
+    f! = symbol(string(f, '!'))
+
+    for (T, suf) in [(:Float32, "32f"), 
+                     (:Float64, "64f")]
+
+        ippf = string(ippfpre, '_', suf)
+        ippfI = string(ippf, "_I")
+
+        @eval begin
+            function $(f!)(y::ContiguousArray{$T}, x::ContiguousArray{$T})
+                n = length(x)
+                length(y) == n || throw(DimensionMismatch("Inconsistent array lengths."))
+                if n > 0
+                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, IppInt), pointer(x), pointer(y), n)
+                end
+                return y
+            end
+
+            function $(f!)(y::ContiguousArray{$T})
+                n = length(y)
+                if n > 0
+                    @ippscall($ippfI, (Ptr{$T}, IppInt), pointer(y), n)
+                end
+                return y
+            end
+
+            $(f)(x::ContiguousArray{$T}) = $(f!)(similar(x), x)
+        end
+    end
+end
 
