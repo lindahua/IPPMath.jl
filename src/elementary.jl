@@ -6,7 +6,8 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                      (:subtract, "ippsSubC"), 
                      (:multiply, "ippsMulC"), 
                      (:divide, "ippsDivC"),
-                     (:rsubtract, "ippsSubCRev")]
+                     (:rsubtract, "ippsSubCRev"), 
+                     (:rdivide, "ippsDivCRev")]
 
     f! = symbol(string(f, '!'))
 
@@ -14,6 +15,10 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                         (:Float64, :Real, "64f"), 
                         (:Complex64, :Number, "32fc"), 
                         (:Complex128, :Number, "64fc")]
+
+        if f == :rdivide && suf != "32f"
+            continue  # ippsDivCRev over float32
+        end
 
         ippf = string(ippfpre, '_', suf)
 
@@ -34,4 +39,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
         end
     end
 end
+
+
+
 

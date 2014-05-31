@@ -18,10 +18,11 @@ c = 2
 @test isempty(IPPMath.divide(Float64[], c))
 
 for x in {xs, xd, xz, xc}
-    @test IPPMath.add(xs, c) == (xs .+ c)
-    @test IPPMath.subtract(xs, c) == (xs .- c)
-    @test IPPMath.rsubtract(xs, c) == (c .- xs)
-    @test IPPMath.multiply(xs, c) == (xs .* c)
-    @test IPPMath.divide(xs, c) == (xs ./ c)
+    @test IPPMath.add(x, c) == (x .+ c)
+    @test IPPMath.subtract(x, c) == (x .- c)
+    @test IPPMath.rsubtract(x, c) == (c .- x)
+    @test IPPMath.multiply(x, c) == (x .* c)
+    @test IPPMath.divide(x, c) == (x ./ c)
 end
 
+@test_approx_eq IPPMath.rdivide(xs, c) c ./ xs
