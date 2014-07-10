@@ -2,10 +2,10 @@
 
 ## vec op vec
 
-for (f, ippfpre) in [(:add, "ippsAdd"), 
-                     (:subtract, "ippsSub"), 
-                     (:multiply, "ippsMul"), 
-                     (:divide, "ippsDiv")]
+for (f, ippfpre) in [ (:add,        "ippsAdd"), 
+                      (:subtract,   "ippsSub"), 
+                      (:multiply,   "ippsMul"), 
+                      (:divide,     "ippsDiv")]
 
     f! = symbol(string(f, '!'))
 
@@ -43,12 +43,12 @@ end
 
 ## vec op scalar
 
-for (f, ippfpre) in [(:add, "ippsAddC"), 
-                     (:subtract, "ippsSubC"), 
-                     (:multiply, "ippsMulC"), 
-                     (:divide, "ippsDivC"),
-                     (:rsubtract, "ippsSubCRev"), 
-                     (:rdivide, "ippsDivCRev")]
+for (f, ippfpre) in [(:add,         "ippsAddC"), 
+                     (:subtract,    "ippsSubC"), 
+                     (:multiply,    "ippsMulC"), 
+                     (:divide,      "ippsDivC"),
+                     (:rsubtract,   "ippsSubCRev"), 
+                     (:rdivide,     "ippsDivCRev")]
 
     f! = symbol(string(f, '!'))
 
@@ -89,12 +89,12 @@ end
 
 # unary elementary math functions
 
-for (f, ippfpre) in [(:abs, "ippsAbs"), 
-                     (:sqr, "ippsSqr"), 
-                     (:sqrt, "ippsSqrt"), 
-                     (:exp, "ippsExp"), 
-                     (:log, "ippsLn"), 
-                     (:atan, "ippsArctan")]
+for (f, ippfpre) in [(:abs,     "ippsAbs"), 
+                     (:sqr,     "ippsSqr"), 
+                     (:sqrt,    "ippsSqrt"), 
+                     (:exp,     "ippsExp"), 
+                     (:log,     "ippsLn"), 
+                     (:atan,    "ippsArctan")]
 
     f! = symbol(string(f, '!'))
 
