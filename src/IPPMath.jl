@@ -2,7 +2,7 @@ module IPPMath
 
     using ArrayViews
     using IPPCore
-    import IPPCore: IppInt, ippint
+    import IPPCore: IPPInt, ippint
 
     export ippversion
 
