@@ -2,10 +2,10 @@
 
 ## vec op vec
 
-for (f, ippfpre) in [(:add, "ippsAdd"), 
-                     (:subtract, "ippsSub"), 
-                     (:multiply, "ippsMul"), 
-                     (:divide, "ippsDiv")]
+for (f, ippfpre) in [ (:add,        "ippsAdd"), 
+                      (:subtract,   "ippsSub"), 
+                      (:multiply,   "ippsMul"), 
+                      (:divide,     "ippsDiv")]
 
     f! = symbol(string(f, '!'))
 
@@ -20,7 +20,7 @@ for (f, ippfpre) in [(:add, "ippsAdd"),
                 n = length(y)
                 length(x1) == length(x2) == n || throw(DimensionMismatch("Inconsistent array lengths."))
                 if n > 0
-                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, Ptr{$T}, IppInt), 
+                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, Ptr{$T}, IPPInt), 
                         pointer(x2), pointer(x1), pointer(y), n)
                 end
                 return y
@@ -30,7 +30,7 @@ for (f, ippfpre) in [(:add, "ippsAdd"),
                 n = length(y)
                 length(x) == n || throw(DimensionMismatch("Inconsistent array lengths."))
                 if n > 0
-                    @ippscall($ippfI, (Ptr{$T}, Ptr{$T}, IppInt), pointer(x), pointer(y), n)
+                    @ippscall($ippfI, (Ptr{$T}, Ptr{$T}, IPPInt), pointer(x), pointer(y), n)
                 end
                 return y
             end
@@ -43,12 +43,12 @@ end
 
 ## vec op scalar
 
-for (f, ippfpre) in [(:add, "ippsAddC"), 
-                     (:subtract, "ippsSubC"), 
-                     (:multiply, "ippsMulC"), 
-                     (:divide, "ippsDivC"),
-                     (:rsubtract, "ippsSubCRev"), 
-                     (:rdivide, "ippsDivCRev")]
+for (f, ippfpre) in [(:add,         "ippsAddC"), 
+                     (:subtract,    "ippsSubC"), 
+                     (:multiply,    "ippsMulC"), 
+                     (:divide,      "ippsDivC"),
+                     (:rsubtract,   "ippsSubCRev"), 
+                     (:rdivide,     "ippsDivCRev")]
 
     f! = symbol(string(f, '!'))
 
@@ -67,7 +67,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
                 n = length(x)
                 length(y) == n || throw(DimensionMismatch("Inconsistent array lengths."))
                 if n > 0
-                    @ippscall($ippf, (Ptr{$T}, $T, Ptr{$T}, IppInt), 
+                    @ippscall($ippf, (Ptr{$T}, $T, Ptr{$T}, IPPInt), 
                         pointer(x), c, pointer(y), n)
                 end
                 return y
@@ -76,7 +76,7 @@ for (f, ippfpre) in [(:add, "ippsAddC"),
             function $(f!)(y::ContiguousArray{$T}, c::$S)
                 n = length(y)
                 if n > 0
-                    @ippscall($ippfI, ($T, Ptr{$T}, IppInt), c, pointer(y), n)
+                    @ippscall($ippfI, ($T, Ptr{$T}, IPPInt), c, pointer(y), n)
                 end
                 return y
             end
@@ -89,12 +89,12 @@ end
 
 # unary elementary math functions
 
-for (f, ippfpre) in [(:abs, "ippsAbs"), 
-                     (:sqr, "ippsSqr"), 
-                     (:sqrt, "ippsSqrt"), 
-                     (:exp, "ippsExp"), 
-                     (:log, "ippsLn"), 
-                     (:atan, "ippsArctan")]
+for (f, ippfpre) in [(:abs,     "ippsAbs"), 
+                     (:sqr,     "ippsSqr"), 
+                     (:sqrt,    "ippsSqrt"), 
+                     (:exp,     "ippsExp"), 
+                     (:log,     "ippsLn"), 
+                     (:atan,    "ippsArctan")]
 
     f! = symbol(string(f, '!'))
 
@@ -109,7 +109,7 @@ for (f, ippfpre) in [(:abs, "ippsAbs"),
                 n = length(x)
                 length(y) == n || throw(DimensionMismatch("Inconsistent array lengths."))
                 if n > 0
-                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, IppInt), pointer(x), pointer(y), n)
+                    @ippscall($ippf, (Ptr{$T}, Ptr{$T}, IPPInt), pointer(x), pointer(y), n)
                 end
                 return y
             end
@@ -117,7 +117,7 @@ for (f, ippfpre) in [(:abs, "ippsAbs"),
             function $(f!)(y::ContiguousArray{$T})
                 n = length(y)
                 if n > 0
-                    @ippscall($ippfI, (Ptr{$T}, IppInt), pointer(y), n)
+                    @ippscall($ippfI, (Ptr{$T}, IPPInt), pointer(y), n)
                 end
                 return y
             end
